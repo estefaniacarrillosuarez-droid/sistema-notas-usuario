@@ -4,7 +4,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Scanner;
+import java.util.List;
+import java.util.Scanner; 
 
 public class Main {
 
@@ -41,7 +42,7 @@ public class Main {
 
         while (true) {
 
-            System.out.println("\n=== SISTEMA DE NOTAS ===");
+            System.out.println(" SISTEMA DE NOTAS ");
             System.out.println("1. Registrarse");
             System.out.println("2. Iniciar sesión");
             System.out.println("0. Salir");
@@ -181,19 +182,19 @@ public class Main {
             switch (opcion) {
 
                 case "1":
-                    System.out.println("Crear nota (pendiente)");
+                    crearNota(email); // Método para guardar una nota
                     break;
 
                 case "2":
-                    System.out.println("Listar notas (pendiente)");
+                    listarNotas(email); // Muestra las notas guardadas
                     break;
 
                 case "3":
-                    System.out.println("Ver nota (pendiente)");
+                    verNota(email); // Muestra una nota específica
                     break;
 
                 case "4":
-                    System.out.println("Eliminar nota (pendiente)");
+                    eliminarNota(email); // Elimina una nota
                     break;
 
                 case "0":
@@ -204,6 +205,141 @@ public class Main {
                     System.out.println("Opción no válida");
             }
 
+        }
+
+    }
+
+    // Crear una nota y guardarla en notas.txt del usuario
+    public static void crearNota(String email) {
+
+        System.out.print("Título: ");
+        String titulo = sc.nextLine();
+
+        System.out.print("Contenido: ");
+        String contenido = sc.nextLine();
+
+        // Convertimos el email en nombre de carpeta válido
+        String carpetaEmail = email.replace("@", "_").replace(".", "_");
+
+        // Ruta del archivo de notas del usuario
+        Path notasFile = Path.of("data")
+        .resolve("usuarios")
+        .resolve(carpetaEmail)
+        .resolve("notas.txt");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(notasFile.toString(), true))) {
+
+            writer.write(titulo + ";" + contenido);
+            writer.newLine();
+
+            System.out.println("Nota guardada correctamente");
+
+        } catch (IOException e) {
+            System.out.println("Error guardando nota");
+        }
+
+    }
+
+    // Listar todas las notas del usuario
+    public static void listarNotas(String email) {
+
+        String carpetaEmail = email.replace("@", "_").replace(".", "_");
+
+        Path notasFile = Path.of("data")
+        .resolve("usuarios")
+        .resolve(carpetaEmail)
+        .resolve("notas.txt");
+
+        try {
+
+            if (!Files.exists(notasFile)) {
+                System.out.println("No hay notas guardadas");
+                return;
+            }
+
+            int i = 1;
+
+            for (String linea : Files.readAllLines(notasFile)) {
+
+                String[] partes = linea.split(";");
+
+                System.out.println(i + ". " + partes[0]);
+                i++;
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error leyendo notas");
+        }
+
+    }
+
+    // Mostrar el contenido completo de una nota
+    public static void verNota(String email) {
+
+        listarNotas(email);
+
+        System.out.print("Número de nota: ");
+        int num = Integer.parseInt(sc.nextLine());
+
+        String carpetaEmail = email.replace("@", "_").replace(".", "_");
+
+        Path notasFile = Path.of("data")
+                .resolve("usuarios")
+                .resolve(carpetaEmail)
+                .resolve("notas.txt");
+
+        try {
+
+            List<String> lineas = Files.readAllLines(notasFile);
+
+            if (num < 1 || num > lineas.size()) {
+                System.out.println("Número inválido");
+                return;
+            }
+
+            String[] partes = lineas.get(num - 1).split(";");
+
+            System.out.println("Título: " + partes[0]);
+            System.out.println("Contenido: " + partes[1]);
+
+        } catch (IOException e) {
+            System.out.println("Error leyendo nota");
+        }
+
+    }
+
+    // Eliminar una nota del archivo
+    public static void eliminarNota(String email) {
+
+        listarNotas(email);
+
+        System.out.print("Número de nota a eliminar: ");
+        int num = Integer.parseInt(sc.nextLine());
+
+        String carpetaEmail = email.replace("@", "_").replace(".", "_");
+
+        Path notasFile = Path.of("data")
+                .resolve("usuarios")
+                .resolve(carpetaEmail)
+                .resolve("notas.txt");
+
+        try {
+
+            List<String> lineas = Files.readAllLines(notasFile);
+
+            if (num < 1 || num > lineas.size()) {
+                System.out.println("Número inválido");
+                return;
+            }
+
+            lineas.remove(num - 1);
+
+            Files.write(notasFile, lineas);
+
+            System.out.println("Nota eliminada correctamente");
+
+        } catch (IOException e) {
+            System.out.println("Error eliminando nota");
         }
 
     }
