@@ -56,7 +56,7 @@ public class Main {
                     break;
 
                 case "2":
-                    System.out.println("Inicio de sesión (pendiente)");
+                    iniciarSesion();
                     break;
 
                 case "0":
@@ -86,7 +86,7 @@ public class Main {
 
         Path usersFile = Path.of("data").resolve("users.txt");
 
-        try { //Controla errores
+        try { // Controla errores
 
             // Comprobamos si el usuario ya existe
             try (BufferedReader reader = Files.newBufferedReader(usersFile)) {
@@ -105,8 +105,7 @@ public class Main {
             }
 
             // Guardamos el usuario
-            try (BufferedWriter writer =
-                     new BufferedWriter(new FileWriter("data/users.txt", true))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("data/users.txt", true))) {
 
                 writer.write(email + ";" + password);
                 writer.newLine();
@@ -116,8 +115,8 @@ public class Main {
             String carpetaEmail = email.replace("@", "_").replace(".", "_");
 
             Path carpetaUsuario = Path.of("data")
-                    .resolve("usuarios")
-                    .resolve(carpetaEmail);
+            .resolve("usuarios")
+            .resolve(carpetaEmail);
 
             Files.createDirectories(carpetaUsuario);
 
@@ -125,6 +124,86 @@ public class Main {
 
         } catch (IOException e) {
             System.out.println("Error registrando usuario");
+        }
+
+    }
+
+    public static void iniciarSesion() {
+
+        System.out.print("Email: ");
+        String email = sc.nextLine().trim();
+
+        System.out.print("Contraseña: ");
+        String password = sc.nextLine().trim();
+
+        Path usersFile = Path.of("data").resolve("users.txt");
+
+        try (BufferedReader reader = Files.newBufferedReader(usersFile)) {
+
+            String linea;
+
+            // Leemos el archivo para comprobar 
+            while ((linea = reader.readLine()) != null) {
+
+                String[] partes = linea.split(";");
+
+                if (partes.length >= 2 && partes[0].equals(email) && partes[1].equals(password)) {
+
+                    System.out.println("Inicio de sesión correcto");
+                    menuUsuario(email);
+                    return;
+                }
+            }
+
+            System.out.println("Email o contraseña incorrectos");
+
+        } catch (IOException e) {
+            System.out.println("Error leyendo usuarios");
+        }
+
+    }
+
+    public static void menuUsuario(String email) {
+
+        while (true) {
+
+            System.out.println(" MENÚ DE USUARIO ");
+            System.out.println("Usuario: " + email);
+            System.out.println("1. Crear nota");
+            System.out.println("2. Listar notas");
+            System.out.println("3. Ver nota");
+            System.out.println("4. Eliminar nota");
+            System.out.println("0. Cerrar sesión");
+            System.out.print("Elige una opción: ");
+
+            String opcion = sc.nextLine();
+
+            switch (opcion) {
+
+                case "1":
+                    System.out.println("Crear nota (pendiente)");
+                    break;
+
+                case "2":
+                    System.out.println("Listar notas (pendiente)");
+                    break;
+
+                case "3":
+                    System.out.println("Ver nota (pendiente)");
+                    break;
+
+                case "4":
+                    System.out.println("Eliminar nota (pendiente)");
+                    break;
+
+                case "0":
+                    System.out.println("Sesión cerrada");
+                    return;
+
+                default:
+                    System.out.println("Opción no válida");
+            }
+
         }
 
     }
