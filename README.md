@@ -1,7 +1,7 @@
 # Sistema de Notas por Usuario #
 
 Aplicación de consola en java que permite registrar usuarios, iniciar sesión y gestionar notas personales.
-Los datos se almacenan en fichos de texto utilizando java.nio.file.
+Los datos se almacenan en ficheros de texto utilizando java.nio.file.
 
 # Funciones #
 
